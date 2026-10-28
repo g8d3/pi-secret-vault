@@ -105,7 +105,7 @@ const NameParam = (description) => Type.String({ description });
 
 export default function secretVaultExtension(pi) {
   pi.registerTool({
-    name: "vault_drop",
+    name: "vault_store",
     label: "Vault store",
     description: "Store (or overwrite) a secret under an env-style NAME. Never values in promptSnippet.",
     parameters: Type.Object({
@@ -125,7 +125,7 @@ export default function secretVaultExtension(pi) {
           uses: prev ? prev.uses : 0,
         };
         save(vault);
-        audit(prev ? "overwrite" : "drop", params.name);
+        audit(prev ? "overwrite" : "store", params.name);
         return ok(`Stored ${params.name} (${prev ? "overwritten" : "new"}).`, { name: params.name });
       } catch (e) {
         return err(e.message);
@@ -134,7 +134,7 @@ export default function secretVaultExtension(pi) {
   });
 
   pi.registerTool({
-    name: "vault_drop_many",
+    name: "vault_store_many",
     label: "Vault batch store",
     description: "Store many secrets in one call. All names are validated first: nothing is written unless every item is valid. Returns per-name status.",
     parameters: Type.Object({
@@ -164,7 +164,7 @@ export default function secretVaultExtension(pi) {
           results.push(`${item.name} (${prev ? "overwritten" : "new"})`);
         }
         save(vault);
-        audit("drop_many", "*", { count: params.items.length, names: params.items.map((i) => i.name) });
+        audit("store_many", "*", { count: params.items.length, names: params.items.map((i) => i.name) });
         return ok(`Stored ${params.items.length} secrets: ${results.join(", ")}.`, { count: params.items.length });
       } catch (e) {
         return err(e.message);

@@ -15,7 +15,7 @@ Body:
 > It is a Pi package with two halves, the way your plugin docs recommend
 > ("extension for agent behavior, web plugin for web UI, shipped together"):
 >
-> - Pi extension: 9 tools (`vault_drop/list/show/forget/exec/export/import/rename/audit`), local `0600` storage + append-only audit log, passphrase-encrypted (scrypt + AES-256-GCM) export bundles for machine-to-machine moves. stdlib + typebox only, no network.
+> - Pi extension: 9 tools (`vault_store/list/show/forget/exec/export/import/rename/audit`), local `0600` storage + append-only audit log, passphrase-encrypted (scrypt + AES-256-GCM) export bundles for machine-to-machine moves. stdlib + typebox only, no network.
 > - (Roadmap) PI WEB plugin: transcript-private drop/reveal dialog + server entry on the same vault format.
 >
 > Two questions:

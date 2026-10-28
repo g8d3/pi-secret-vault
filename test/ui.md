@@ -24,7 +24,7 @@ The extension is already installed at two levels in this checkout:
 2. Start a new session (any model; the reference run used
    `opencode-go/muse-spark-1.3-contributor`).
 3. Send:
-   `You have vault_* tools. Do exactly this and report briefly without printing secret values: 1) vault_drop name UITEST value ui-7741-web. 2) vault_list. 3) vault_exec name UITEST command ["sh","-c","echo hi-$UITEST-bye"].`
+   `You have vault_* tools. Do exactly this and report briefly without printing secret values: 1) vault_store name UITEST value ui-7741-web. 2) vault_list. 3) vault_exec name UITEST command ["sh","-c","echo hi-$UITEST-bye"].`
 4. Expect: `Stored UITEST (new).`, list shows 1 secret,
    `vault_exec exit=0` with output rendered `hi-***-bye`.
 

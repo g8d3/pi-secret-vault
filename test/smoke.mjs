@@ -20,8 +20,8 @@ const call = async (name, params) => {
   return r;
 };
 
-await call("vault_drop", { name: "API_KEY", value: "s3cr3t-value-123" });
-await call("vault_drop", { name: "OTHER", value: "xyz" });
+await call("vault_store", { name: "API_KEY", value: "s3cr3t-value-123" });
+await call("vault_store", { name: "OTHER", value: "xyz" });
 await call("vault_list");
 await call("vault_show", { name: "API_KEY" });
 await call("vault_exec", { name: "API_KEY", command: ["sh", "-c", "echo token=$API_KEY"] });

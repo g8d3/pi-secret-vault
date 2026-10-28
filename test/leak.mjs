@@ -18,7 +18,7 @@ const assert = (cond, label) => {
 const textOf = (r) => r.content.map((c) => c.text).join("");
 
 const SECRET = `leakcheck-${Date.now()}-zz9`;
-await tools.vault_drop.execute("t", { name: "L", value: SECRET });
+await tools.vault_store.execute("t", { name: "L", value: SECRET });
 
 const exec = await tools.vault_exec.execute("t", {
   name: "L",

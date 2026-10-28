@@ -10,10 +10,10 @@ A Pi extension (`extension/vault.js`, stdlib + `typebox` only) that registers 11
 
 | Tool | What it does |
 |---|---|
-| `vault_drop` | Store (or overwrite) a secret under an env-style NAME |
+| `vault_store` | Store (or overwrite) a secret under an env-style NAME |
 | `vault_list` | List NAMES + metadata (created/updated/uses). Never values |
 | `vault_show` | Reveal one value. Audit-logged — prefer `vault_exec` when the value only needs to be *used* |
-| `vault_drop_many` | Store many secrets in one call (all-or-nothing validation) |
+| `vault_store_many` | Store many secrets in one call (all-or-nothing validation) |
 | `vault_show_many` | Reveal many values in one call (audit-logged) |
 | `vault_forget` | Permanently delete a secret |
 | `vault_exec` | Run a command with the secret as an env var; stdout/stderr come back scrubbed (`***`), value never in the result |
@@ -32,7 +32,7 @@ pi --extension ./extension/vault.js
 
 ## Privacy model
 
-Tools run in-process with your OS permissions. `vault_list`/`vault_audit` never return values; `vault_exec` scrubs them from output. But a value passed to `vault_show` (or `vault_drop`) travels through the model transcript — same as typing it in chat. The truly transcript-private path (type the secret into a host dialog, never into chat) needs host UI support: tracked as the PI WEB plugin half of this package (see Roadmap). Until then, rule of thumb: **use, don't show** — `vault_exec` over `vault_show`.
+Tools run in-process with your OS permissions. `vault_list`/`vault_audit` never return values; `vault_exec` scrubs them from output. But a value passed to `vault_show` (or `vault_store`) travels through the model transcript — same as typing it in chat. The truly transcript-private path (type the secret into a host dialog, never into chat) needs host UI support: tracked as the PI WEB plugin half of this package (see Roadmap). Until then, rule of thumb: **use, don't show** — `vault_exec` over `vault_show`.
 
 ## Roadmap
 
