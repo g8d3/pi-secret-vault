@@ -38,9 +38,15 @@ Tools run in-process with your OS permissions. `vault_list`/`vault_audit` never 
 - `vault_expire`: TTL per secret with automatic purge.
 - `vault_check`: prove a name exists (for scripts) without revealing or logging a reveal.
 
-## Test
+## Test (repeatable, three levels)
 
 ```bash
 npm install
-node test/smoke.mjs
+node test/smoke.mjs  # all 9 tools, happy path
+node test/leak.mjs    # exit 1 on any secret in list/audit/exec results, wrong-passphrase rejection
+./test/e2e.sh         # real pi agent loop (spends model credits, default MODEL=opencode-go/muse-spark-1.3-contributor)
 ```
+
+`e2e.sh` asserts: drop/list/exec/export/forget/import/rename/show/audit through the agent, `0600` files, encrypted bundle round-trip, wrong-passphrase rejection, and — with a fresh random secret per run — that the value never appears in the no-reveal transcript (phase 1) while `vault_show`'s tool result does carry it (phase 2, `--mode json`).
+
+Known model behavior: Muse Spark refuses to *print* a revealed value into chat even when asked (safety refusal) — `vault_show` works at the tool layer, the model just won't quote it. Prefer `vault_exec` (use, don't show).
