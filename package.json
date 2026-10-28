@@ -1,0 +1,10 @@
+{
+  "name": "pi-secret-vault",
+  "version": "0.1.0",
+  "description": "Pi extension: local secret vault (store, reveal, exec, encrypted import/export, audit). No keys, no network.",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "typebox": "^1.3.27"
+  }
+}
