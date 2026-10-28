@@ -4,7 +4,7 @@ Local secret vault as a Pi extension. One plain sentence: your agent stores, use
 
 ## What it is
 
-A Pi extension (`extension/vault.js`, stdlib + `typebox` only) that registers 9 agent tools. Storage is one JSON file (mode `0600`) under `$PI_SECRET_VAULT_DIR` or `~/.pi-secret-vault/`, plus an append-only `audit.jsonl`. No network, no keys, no framework.
+A Pi extension (`extension/vault.js`, stdlib + `typebox` only) that registers 11 agent tools. Storage is one JSON file (mode `0600`) under `$PI_SECRET_VAULT_DIR` or `~/.pi-secret-vault/`, plus an append-only `audit.jsonl`. No network, no keys, no framework.
 
 ## Tools
 
@@ -13,6 +13,8 @@ A Pi extension (`extension/vault.js`, stdlib + `typebox` only) that registers 9 
 | `vault_drop` | Store (or overwrite) a secret under an env-style NAME |
 | `vault_list` | List NAMES + metadata (created/updated/uses). Never values |
 | `vault_show` | Reveal one value. Audit-logged — prefer `vault_exec` when the value only needs to be *used* |
+| `vault_drop_many` | Store many secrets in one call (all-or-nothing validation) |
+| `vault_show_many` | Reveal many values in one call (audit-logged) |
 | `vault_forget` | Permanently delete a secret |
 | `vault_exec` | Run a command with the secret as an env var; stdout/stderr come back scrubbed (`***`), value never in the result |
 | `vault_export` | Export ALL secrets to a passphrase-encrypted bundle (scrypt + AES-256-GCM). Returns the path, never values |

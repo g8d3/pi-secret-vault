@@ -134,6 +134,45 @@ export default function secretVaultExtension(pi) {
   });
 
   pi.registerTool({
+    name: "vault_drop_many",
+    label: "Vault batch store",
+    description: "Store many secrets in one call. All names are validated first: nothing is written unless every item is valid. Returns per-name status.",
+    parameters: Type.Object({
+      items: Type.Array(
+        Type.Object({
+          name: NameParam("Env-style secret name"),
+          value: Type.String({ description: "The secret value to store" }),
+        }),
+        { description: "Secrets to store" }
+      ),
+    }),
+    async execute(_id, params) {
+      try {
+        if (!Array.isArray(params.items) || !params.items.length) return err("items must be a non-empty array.");
+        for (const item of params.items) checkName(item.name);
+        const vault = load();
+        const now = new Date().toISOString();
+        const results = [];
+        for (const item of params.items) {
+          const prev = vault.secrets[item.name];
+          vault.secrets[item.name] = {
+            value: item.value,
+            createdAt: prev ? prev.createdAt : now,
+            updatedAt: now,
+            uses: prev ? prev.uses : 0,
+          };
+          results.push(`${item.name} (${prev ? "overwritten" : "new"})`);
+        }
+        save(vault);
+        audit("drop_many", "*", { count: params.items.length, names: params.items.map((i) => i.name) });
+        return ok(`Stored ${params.items.length} secrets: ${results.join(", ")}.`, { count: params.items.length });
+      } catch (e) {
+        return err(e.message);
+      }
+    },
+  });
+
+  pi.registerTool({
     name: "vault_list",
     label: "Vault list",
     description: "List secret NAMES with metadata (created/updated/uses). Never returns values.",
@@ -160,6 +199,29 @@ export default function secretVaultExtension(pi) {
         if (!entry) return err(`No secret named ${params.name}.`);
         audit("show", params.name);
         return ok(entry.value, { name: params.name });
+      } catch (e) {
+        return err(e.message);
+      }
+    },
+  });
+
+  pi.registerTool({
+    name: "vault_show_many",
+    label: "Vault batch reveal",
+    description: "Reveal many secret VALUES in one call. Audit-logged. Prefer vault_exec when values only need to be used.",
+    parameters: Type.Object({
+      names: Type.Array(NameParam("Secret names to reveal"), { description: "Names to reveal" }),
+    }),
+    async execute(_id, params) {
+      try {
+        if (!Array.isArray(params.names) || !params.names.length) return err("names must be a non-empty array.");
+        for (const n of params.names) checkName(n);
+        const vault = load();
+        const missing = params.names.filter((n) => !vault.secrets[n]);
+        if (missing.length) return err(`No secrets named: ${missing.join(", ")}.`);
+        audit("show_many", "*", { count: params.names.length, names: params.names });
+        const lines = params.names.map((n) => `${n}=${vault.secrets[n].value}`);
+        return ok(lines.join("\n"), { count: params.names.length });
       } catch (e) {
         return err(e.message);
       }
