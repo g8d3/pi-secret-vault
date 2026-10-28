@@ -11,7 +11,7 @@
 // model transcript. vault_list never returns values. Prefer vault_exec over
 // vault_show whenever the value only needs to be *used*, not seen.
 
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, openSync, closeSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, dirname } from "node:path";
 import { execFile } from "node:child_process";
@@ -52,7 +52,13 @@ function save(vault) {
 }
 function audit(op, name, extra) {
   try {
-    appendFileSync(auditFile(), JSON.stringify({ t: new Date().toISOString(), op, name, ...(extra || {}) }) + "\n");
+    ensureDir();
+    const fd = openSync(auditFile(), "a", 0o600);
+    appendFileSync(fd, JSON.stringify({ t: new Date().toISOString(), op, name, ...(extra || {}) }) + "\n");
+    closeSync(fd);
+    try {
+      chmodSync(auditFile(), 0o600);
+    } catch {}
   } catch {}
 }
 function checkName(name) {
